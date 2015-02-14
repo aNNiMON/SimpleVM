@@ -2,6 +2,7 @@ package com.annimon.simplevm;
 
 import static com.annimon.simplevm.Instructions.*;
 import com.annimon.simplevm.lib.Print;
+import com.annimon.simplevm.lib.Concat;
 
 /**
  *
@@ -31,7 +32,11 @@ public class Main {
         INVOKE,
         I2S,
         
-        // print
+        // concat strings
+        LDC, 8, // STRING "Average of..."
+        LDC, 7, // STRING "concat"
+        INVOKE_NATIVE,
+            
         LDC, 6, // STRING "print"
         INVOKE_NATIVE
     };
@@ -83,7 +88,7 @@ public class Main {
     };
     
     public static void main(String[] args) {
-        Program program = new Program(7);
+        Program program = new Program(9);
         program.setConstant(0, Constant.integer(0));
         program.setConstant(1, Constant.integer(20));
         program.setConstant(2, Constant.string("sum"));
@@ -91,12 +96,15 @@ public class Main {
         program.setConstant(4, Constant.integer(2));
         program.setConstant(5, Constant.string("average"));
         program.setConstant(6, Constant.string("print"));
+        program.setConstant(7, Constant.string("concat"));
+        program.setConstant(8, Constant.string("Average of sum(0..20) and sum(-40..-20) is "));
         
         program.addMethod("main", main, 0);
         program.addMethod("sum", sum, 3);
         program.addMethod("average", average, 0);
         
         program.addNativeMethod("print", new Print());
+        program.addNativeMethod("concat", new Concat());
         
         new VirtualMachine(program).execute();
     }
