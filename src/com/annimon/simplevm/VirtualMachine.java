@@ -33,11 +33,15 @@ public class VirtualMachine {
     public void execute() {
         do {
             switch(readNextInstruction()) {
-                case ILOAD:
-                    operandStack.push(18);
-                    break;
-                case ISTORE:
-                    break;
+                case ILOAD: {
+                    int memoryAddr = readNextInstruction();
+                    operandStack.push(memory.get(memoryAddr));
+                } break;
+                    
+                case ISTORE: {
+                    int memoryAddr = readNextInstruction();
+                    memory.set(memoryAddr, operandStack.pop());
+                } break;
 
                     
                 case IADD:
