@@ -56,6 +56,17 @@ public class VirtualMachine {
                         operandStack.push(((Constant.ConstantInt)constant).value);
                     }
                 } break;
+                    
+                
+                case GETFIELD: {
+                    int fieldAddr = readNextInstruction();
+                    operandStack.push(fields.get(fieldAddr));
+                } break;
+                    
+                case PUTFIELD: {
+                    int fieldAddr = readNextInstruction();
+                    fields.set(fieldAddr, operandStack.pop());
+                } break;
 
                     
                 case IADD:

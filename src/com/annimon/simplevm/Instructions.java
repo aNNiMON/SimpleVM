@@ -11,6 +11,9 @@ public class Instructions {
             ISTORE = 11,
             LDC = 12, // load constant
             
+            GETFIELD = 20,
+            PUTFIELD = 21,
+            
             IADD = 40, // n + m
             ISUB = 41, // n - m
             IMUL = 42, // n * m
