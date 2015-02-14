@@ -128,6 +128,14 @@ public class VirtualMachine {
                     instructionPointer = readNextInstruction();
                     break;
                     
+                    
+                case I2S: {
+                    int arg = operandStack.pop();
+                    operandStack.pushString(Integer.toString(arg));
+                } break;
+                    
+                    
+                    
                 case INVOKE_PRINT: {
                     System.out.println(operandStack.popString());
                 } break;
