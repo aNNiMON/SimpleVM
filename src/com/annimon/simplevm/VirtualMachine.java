@@ -1,6 +1,7 @@
 package com.annimon.simplevm;
 
 import static com.annimon.simplevm.Instructions.*;
+import com.annimon.simplevm.utils.Data;
 import com.annimon.simplevm.utils.IntStack;
 
 /**
@@ -10,12 +11,20 @@ import com.annimon.simplevm.utils.IntStack;
 public class VirtualMachine {
     
     private final IntStack operandStack;
+    private final Data constantPool;
+    private final Data memory;
     
     private final byte[] instructionsBytecode;
     private int instructionPointer;
     
     public VirtualMachine(byte[] instructions) {
+        this(instructions, new Data(0), new Data(20));
+    }
+    
+    public VirtualMachine(byte[] instructions, Data constantPool, Data memory) {
         operandStack = new IntStack();
+        this.constantPool = constantPool;
+        this.memory = memory;
         
         this.instructionsBytecode = instructions;
         instructionPointer = 0;
