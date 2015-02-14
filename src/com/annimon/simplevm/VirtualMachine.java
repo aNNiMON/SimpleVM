@@ -11,17 +11,17 @@ import com.annimon.simplevm.utils.IntStack;
 public class VirtualMachine {
     
     private final IntStack operandStack;
-    private final Data constantPool;
+    private final ConstantPool constantPool;
     private final Data memory;
     
     private final byte[] instructionsBytecode;
     private int instructionPointer;
     
     public VirtualMachine(byte[] instructions) {
-        this(instructions, new Data(0), new Data(20));
+        this(instructions, new ConstantPool(0), new Data(20));
     }
     
-    public VirtualMachine(byte[] instructions, Data constantPool, Data memory) {
+    public VirtualMachine(byte[] instructions, ConstantPool constantPool, Data memory) {
         operandStack = new IntStack();
         this.constantPool = constantPool;
         this.memory = memory;
@@ -45,7 +45,12 @@ public class VirtualMachine {
                     
                 case LDC: {
                     int constAddr = readNextInstruction();
-                    operandStack.push(constantPool.get(constAddr));
+                    Constant constant = constantPool.get(constAddr);
+                    if (constant.getType() == Constant.STRING) {
+                        operandStack.pushString(((Constant.ConstantString)constant).value);
+                    } else {
+                        operandStack.push(((Constant.ConstantInt)constant).value);
+                    }
                 } break;
 
                     
@@ -124,7 +129,7 @@ public class VirtualMachine {
                     break;
                     
                 case INVOKE_PRINT: {
-                    System.out.println(operandStack.pop());
+                    System.out.println(operandStack.popString());
                 } break;
                     
                 case NOP:
