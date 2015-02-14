@@ -118,10 +118,14 @@ public class VirtualMachine {
                     int arg1 = operandStack.pop();
                     if (arg1 < arg2) instructionPointer = readNextInstruction();
                 } break;
-
+                    
                 case GOTO:
                     instructionPointer = readNextInstruction();
                     break;
+                    
+                case INVOKE_PRINT: {
+                    System.out.println(operandStack.pop());
+                } break;
                     
                 case NOP:
                     // do nothing

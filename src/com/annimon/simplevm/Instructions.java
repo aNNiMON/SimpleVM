@@ -28,6 +28,9 @@ public class Instructions {
             
             GOTO = 120,
             
+            INVOKE = (byte) 200,
+            INVOKE_PRINT = (byte) 201,
+            
             NOP = 0;
             
 }

@@ -17,6 +17,7 @@ public class Main {
         // (i1 + i2) * i3
         LDC, 2,
         IMUL,
+        INVOKE_PRINT
     };
     
     public static void main(String[] args) {
