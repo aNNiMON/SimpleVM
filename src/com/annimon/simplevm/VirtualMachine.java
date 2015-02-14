@@ -11,41 +11,45 @@ import com.annimon.simplevm.utils.IntStack;
 public class VirtualMachine {
     
     private final IntStack operandStack;
-    private final ConstantPool constantPool;
-    private final Data memory;
+    private final Data fields;
+    private final Program program;
     
-    private final byte[] instructionsBytecode;
+    private byte[] instructionsBytecode;
     private int instructionPointer;
     
-    public VirtualMachine(byte[] instructions) {
-        this(instructions, new ConstantPool(0), new Data(20));
-    }
-    
-    public VirtualMachine(byte[] instructions, ConstantPool constantPool, Data memory) {
+    public VirtualMachine(Program program) {
         operandStack = new IntStack();
-        this.constantPool = constantPool;
-        this.memory = memory;
-        
-        this.instructionsBytecode = instructions;
-        instructionPointer = 0;
+        this.program = program;
+        this.fields = new Data(program.getNumFields());
     }
     
     public void execute() {
+        executeMethod("main");
+    }
+    
+    public void executeMethod(String methodName) {
+        executeMethod(program.getMethod(methodName));
+    }
+    
+    public void executeMethod(Method method) {
+        final Data local = new Data(method.getNumLocals());
+        instructionPointer = 0;
+        instructionsBytecode = method.getInstructionsBytecode();
         do {
             switch(readNextInstruction()) {
                 case ILOAD: {
                     int memoryAddr = readNextInstruction();
-                    operandStack.push(memory.get(memoryAddr));
+                    operandStack.push(local.get(memoryAddr));
                 } break;
                     
                 case ISTORE: {
                     int memoryAddr = readNextInstruction();
-                    memory.set(memoryAddr, operandStack.pop());
+                    local.set(memoryAddr, operandStack.pop());
                 } break;
                     
                 case LDC: {
                     int constAddr = readNextInstruction();
-                    Constant constant = constantPool.get(constAddr);
+                    Constant constant = program.getConstant(constAddr);
                     if (constant.getType() == Constant.STRING) {
                         operandStack.pushString(((Constant.ConstantString)constant).value);
                     } else {
@@ -135,6 +139,14 @@ public class VirtualMachine {
                 } break;
                     
                     
+                case INVOKE: {
+                    String methodName = operandStack.popString();
+                    int oldAddr = instructionPointer;
+                    executeMethod(methodName);
+                    // Restore bytecode and pointer
+                    instructionPointer = oldAddr;
+                    instructionsBytecode = method.getInstructionsBytecode();
+                } break;
                     
                 case INVOKE_PRINT: {
                     System.out.println(operandStack.popString());
