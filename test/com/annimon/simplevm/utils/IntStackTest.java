@@ -23,6 +23,19 @@ public class IntStackTest {
         assertEquals(200, instance.pop());
     }
     
+    @Test
+    public void testPushPopBoolean() {
+        IntStack instance = new IntStack();
+        instance.pushBoolean(true);
+        instance.pushBoolean(false);
+        
+        assertEquals(false, instance.popBoolean());
+        assertEquals(true, instance.popBoolean());
+        
+        instance.pushBoolean(true);
+        assertEquals(1, instance.pop());
+    }
+    
     @Test(expected = RuntimeException.class)
     public void testPushOverflow() {
         IntStack instance = new IntStack(2);
