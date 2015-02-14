@@ -1,5 +1,6 @@
 package com.annimon.simplevm;
 
+import com.annimon.simplevm.lib.NativeMethod;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import java.util.Map;
 public class Program {
     
     private final Map<String, Method> methods;
+    private final Map<String, NativeMethod> nativeMethods;
     private final ConstantPool constantPool;
     private final int numFields;
 
@@ -27,6 +29,7 @@ public class Program {
     
     public Program(ConstantPool constantPool, int numFields) {
         this.methods = new HashMap<>();
+        this.nativeMethods = new HashMap<>();
         this.constantPool = constantPool;
         this.numFields = numFields;
     }
@@ -41,6 +44,14 @@ public class Program {
     
     public Method getMethod(String name) {
         return methods.get(name);
+    }
+    
+    public void addNativeMethod(String name, NativeMethod method) {
+        nativeMethods.put(name, method);
+    }
+    
+    public NativeMethod getNativeMethod(String name) {
+        return nativeMethods.get(name);
     }
 
     public Constant getConstant(int addr) {

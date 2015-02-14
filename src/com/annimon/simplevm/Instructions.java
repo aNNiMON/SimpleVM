@@ -34,7 +34,7 @@ public class Instructions {
             I2S = (byte) 150, // int to string
             
             INVOKE = (byte) 200,
-            INVOKE_PRINT = (byte) 201,
+            INVOKE_NATIVE = (byte) 201,
             
             NOP = 0;
             

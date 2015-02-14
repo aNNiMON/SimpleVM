@@ -1,6 +1,7 @@
 package com.annimon.simplevm;
 
 import static com.annimon.simplevm.Instructions.*;
+import com.annimon.simplevm.lib.NativeMethod;
 import com.annimon.simplevm.utils.Data;
 import com.annimon.simplevm.utils.IntStack;
 
@@ -159,8 +160,11 @@ public class VirtualMachine {
                     instructionsBytecode = method.getInstructionsBytecode();
                 } break;
                     
-                case INVOKE_PRINT: {
-                    System.out.println(operandStack.popString());
+                case INVOKE_NATIVE: {
+                    String methodName = operandStack.popString();
+                    NativeMethod nm = program.getNativeMethod(methodName);
+                    nm.setOperandStack(operandStack);
+                    nm.invoke();
                 } break;
                     
                 case NOP:
