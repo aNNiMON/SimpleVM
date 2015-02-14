@@ -11,19 +11,19 @@ public class Main {
     
     private static final byte[] sample = {
         // i1 + i2
-        ILOAD, 0,
-        ILOAD, 1,
+        LDC, 0,
+        LDC, 1,
         IADD,
         // (i1 + i2) * i3
-        ILOAD, 2,
+        LDC, 2,
         IMUL,
     };
     
     public static void main(String[] args) {
-        final Data memory = new Data(3);
-        memory.set(0, 10);
-        memory.set(1, 20);
-        memory.set(2, -5);
-        new VirtualMachine(sample, new Data(0), memory).execute();
+        final Data constantPool = new Data(3);
+        constantPool.set(0, 10);
+        constantPool.set(1, 20);
+        constantPool.set(2, -5);
+        new VirtualMachine(sample, constantPool, new Data(0)).execute();
     }
 }

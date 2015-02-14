@@ -42,6 +42,11 @@ public class VirtualMachine {
                     int memoryAddr = readNextInstruction();
                     memory.set(memoryAddr, operandStack.pop());
                 } break;
+                    
+                case LDC: {
+                    int constAddr = readNextInstruction();
+                    operandStack.push(constantPool.get(constAddr));
+                } break;
 
                     
                 case IADD:

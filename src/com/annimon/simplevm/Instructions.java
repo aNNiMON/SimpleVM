@@ -9,6 +9,7 @@ public class Instructions {
     public static final byte
             ILOAD = 10,
             ISTORE = 11,
+            LDC = 12, // load constant
             
             IADD = 40, // n + m
             ISUB = 41, // n - m
