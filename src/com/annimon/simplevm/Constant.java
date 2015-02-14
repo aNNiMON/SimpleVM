@@ -10,6 +10,14 @@ public class Constant {
             INT = 1,
             STRING = 2;
     
+    public static Constant integer(int value) {
+        return new ConstantInt(value);
+    }
+    
+    public static Constant string(String value) {
+        return new ConstantString(value);
+    }
+    
     private final int type;
     
     public Constant(int type) {

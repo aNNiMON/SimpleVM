@@ -27,10 +27,10 @@ public class Main {
     
     public static void main(String[] args) {
         final ConstantPool constantPool = new ConstantPool(4);
-        constantPool.set(0, new Constant.ConstantInt(10));
-        constantPool.set(1, new Constant.ConstantInt(20));
-        constantPool.set(2, new Constant.ConstantInt(-5));
-        constantPool.set(3, new Constant.ConstantString("Hello, world"));
+        constantPool.set(0, Constant.integer(10));
+        constantPool.set(1, Constant.integer(20));
+        constantPool.set(2, Constant.integer(-5));
+        constantPool.set(3, Constant.string("Hello, world"));
         new VirtualMachine(sample, constantPool, new Data(0)).execute();
     }
 }
