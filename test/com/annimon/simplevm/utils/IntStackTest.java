@@ -36,6 +36,20 @@ public class IntStackTest {
         assertEquals(1, instance.pop());
     }
     
+    @Test
+    public void testPushPopString() {
+        IntStack instance = new IntStack();
+        instance.pushString("string");
+        instance.pushString("");
+        
+        assertEquals("", instance.popString());
+        assertEquals("string", instance.popString());
+        
+        instance.pushString("2");
+        assertEquals(1, instance.pop());
+        assertEquals('2', instance.pop());
+    }
+    
     @Test(expected = RuntimeException.class)
     public void testPushOverflow() {
         IntStack instance = new IntStack(2);

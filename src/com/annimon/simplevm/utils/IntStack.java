@@ -38,4 +38,21 @@ public class IntStack {
     public boolean popBoolean() {
         return (pop() != 0);
     }
+    
+    public void pushString(String value) {
+        final int length = value.length();
+        for (int i = length - 1; i >= 0; i--) {
+            push(value.charAt(i));
+        }
+        push(length);
+    }
+    
+    public String popString() {
+        final int length = pop();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append((char)pop());
+        }
+        return sb.toString();
+    }
 }
