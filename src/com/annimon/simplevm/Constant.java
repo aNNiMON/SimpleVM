@@ -6,7 +6,7 @@ package com.annimon.simplevm;
  */
 public class Constant {
     
-    public static int
+    public static final int
             INT = 1,
             STRING = 2;
     

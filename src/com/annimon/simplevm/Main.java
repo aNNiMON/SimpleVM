@@ -4,6 +4,7 @@ import static com.annimon.simplevm.Instructions.*;
 import com.annimon.simplevm.lib.Print;
 import com.annimon.simplevm.lib.Concat;
 import com.annimon.simplevm.lib.ReflectionInvocator;
+import java.io.IOException;
 
 /**
  *
@@ -110,7 +111,9 @@ public class Main {
         program.addMethod(name, calc, numLocals);
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+//        program = Program.read(new FileInputStream("sample.svm"));
+        
         program = new Program(13);
         program.setConstant(0, Constant.integer(0));
         program.setConstant(1, Constant.integer(20));
@@ -135,5 +138,7 @@ public class Main {
         program.addNativeMethod("reflectCall", new ReflectionInvocator());
         
         new VirtualMachine(program).execute();
+        
+//        Program.write(program, new FileOutputStream("sample.svm"));
     }
 }

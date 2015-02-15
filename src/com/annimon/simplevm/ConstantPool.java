@@ -16,6 +16,10 @@ public class ConstantPool {
         this.constants = constants;
     }
     
+    public int getSize() {
+        return constants.length;
+    }
+    
     public Constant get(int addr) {
         return constants[addr];
     }
