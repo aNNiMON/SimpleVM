@@ -22,7 +22,11 @@ public class IntStack {
     
     public void push(int value) {
         pointer++;
-        if (pointer >= stack.length) throw new RuntimeException("Stack overflow");
+        if (pointer >= stack.length) {
+            final int[] arr = new int[(int)(stack.length * 1.5)];
+            System.arraycopy(stack, 0, arr, 0, stack.length);
+            stack = arr;
+        }
         stack[pointer] = value;
     }
 
