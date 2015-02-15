@@ -10,6 +10,10 @@ public class Instructions {
             ILOAD = 10,
             ISTORE = 11,
             LDC = 12, // load constant
+            ICONST_0 = 13, // 0
+            ICONST_1 = 14, // 1
+            BCONST = 15, // 1 byte const
+            SCONST = 16, // 2 bytes const
             
             GETFIELD = 20,
             PUTFIELD = 21,
