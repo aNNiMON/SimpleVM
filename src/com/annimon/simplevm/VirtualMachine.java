@@ -29,7 +29,12 @@ public class VirtualMachine {
     }
     
     public void executeMethod(String methodName) {
-        executeMethod(program.getMethod(methodName));
+        try {
+            executeMethod(program.getMethod(methodName));
+        } catch (RuntimeException e) {
+            System.out.printf("%s\nat %s, instruction #%d\n",
+                    e.toString(), methodName, instructionPointer);
+        }
     }
     
     public void executeMethod(Method method) {
@@ -58,7 +63,25 @@ public class VirtualMachine {
                     }
                 } break;
                     
-                
+                case ICONST_0:
+                    operandStack.push(0);
+                    break;
+                    
+                case ICONST_1:
+                    operandStack.push(1);
+                    break;
+                    
+                case BCONST: {
+                    int value = readNextInstruction();
+                    operandStack.push(value);
+                } break;
+                    
+                case SCONST: {
+                    int value = (readNextInstruction() << 8) | readNextInstruction();
+                    operandStack.push(value);
+                } break;
+                    
+                    
                 case GETFIELD: {
                     int fieldAddr = readNextInstruction();
                     operandStack.push(fields.get(fieldAddr));
