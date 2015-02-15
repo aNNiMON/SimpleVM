@@ -3,6 +3,7 @@ package com.annimon.simplevm;
 import static com.annimon.simplevm.Instructions.*;
 import com.annimon.simplevm.lib.Print;
 import com.annimon.simplevm.lib.Concat;
+import com.annimon.simplevm.lib.ReflectionInvocator;
 
 /**
  *
@@ -12,6 +13,20 @@ public class Main {
     
     // Main method
     private static final byte[] main = {
+        // Dynamically add method calc, then invoke it
+        LDC, 12, // STRING "calc" (arg1: name)
+        LDC, 0,  // INT 0 (arg2: numLocals)
+        LDC, 10, // class
+        LDC, 11, // method with signature
+        LDC, 9, // "reflectCall" 
+        INVOKE_NATIVE,
+        
+        LDC, 12,
+        INVOKE
+    };
+    
+    // Calc average of sum ranges
+    private static final byte[] calc = {
         // print((String) average(sum(0,20), sum(-40,-20)))
         
         // sum(0, 20)
@@ -87,8 +102,16 @@ public class Main {
         IDIV
     };
     
+    
+    private static Program program;
+    
+    public static void addMethod(String name, int numLocals) {
+        System.out.println(String.format("Adding method %s with %d locals", name, numLocals));
+        program.addMethod(name, calc, numLocals);
+    }
+    
     public static void main(String[] args) {
-        Program program = new Program(9);
+        program = new Program(13);
         program.setConstant(0, Constant.integer(0));
         program.setConstant(1, Constant.integer(20));
         program.setConstant(2, Constant.string("sum"));
@@ -98,6 +121,10 @@ public class Main {
         program.setConstant(6, Constant.string("print"));
         program.setConstant(7, Constant.string("concat"));
         program.setConstant(8, Constant.string("Average of sum(0..20) and sum(-40..-20) is "));
+        program.setConstant(9, Constant.string("reflectCall"));
+        program.setConstant(10, Constant.string("com.annimon.simplevm.Main"));
+        program.setConstant(11, Constant.string("addMethod(SI)V"));
+        program.setConstant(12, Constant.string("calc"));
         
         program.addMethod("main", main, 0);
         program.addMethod("sum", sum, 3);
@@ -105,6 +132,7 @@ public class Main {
         
         program.addNativeMethod("print", new Print());
         program.addNativeMethod("concat", new Concat());
+        program.addNativeMethod("reflectCall", new ReflectionInvocator());
         
         new VirtualMachine(program).execute();
     }
