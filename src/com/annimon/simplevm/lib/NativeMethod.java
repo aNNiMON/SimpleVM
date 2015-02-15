@@ -14,7 +14,7 @@ public abstract class NativeMethod {
         this.operandStack = operandStack;
     }
     
-    public abstract void invoke();
+    public abstract void invoke() throws Exception;
 
     
     protected final void push(int value) {

@@ -164,7 +164,11 @@ public class VirtualMachine {
                     String methodName = operandStack.popString();
                     NativeMethod nm = program.getNativeMethod(methodName);
                     nm.setOperandStack(operandStack);
-                    nm.invoke();
+                    try {
+                        nm.invoke();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 } break;
                     
                 case NOP:
