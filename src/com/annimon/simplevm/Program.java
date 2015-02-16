@@ -149,4 +149,8 @@ public class Program {
     public void setConstant(int addr, Constant value) {
         constantPool.set(addr, value);
     }
+    
+    public void execute() {
+        new VirtualMachine(this).execute();
+    }
 }
