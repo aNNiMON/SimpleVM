@@ -40,6 +40,26 @@ public class Constant {
         }
         
         public int value;
+
+        @Override
+        public int hashCode() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final ConstantInt other = (ConstantInt) obj;
+            return this.value == other.value;
+        }
+        
+        @Override
+        public String toString() {
+            return "Int: " + value;
+        }
     }
     
     public static class ConstantString extends Constant {
@@ -54,5 +74,27 @@ public class Constant {
         }
         
         public String value;
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final ConstantString other = (ConstantString) obj;
+            return (value == other.value) ||
+                   (value != null && value.equals(other.value));
+        }
+        
+        
+        @Override
+        public String toString() {
+            return "String: " + value;
+        }
     }
 }
