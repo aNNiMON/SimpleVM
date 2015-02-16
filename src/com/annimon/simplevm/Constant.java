@@ -4,7 +4,7 @@ package com.annimon.simplevm;
  *
  * @author aNNiMON
  */
-public class Constant {
+public abstract class Constant implements Comparable<Constant> {
     
     public static final int
             INT = 1,
@@ -28,6 +28,14 @@ public class Constant {
         return type;
     }
     
+    @Override
+    public int compareTo(Constant o) {
+        return valueAsString().compareTo(o.valueAsString());
+    }
+    
+    public abstract String valueAsString();
+    
+    
     public static class ConstantInt extends Constant {
         
         public ConstantInt() {
@@ -40,6 +48,11 @@ public class Constant {
         }
         
         public int value;
+        
+        @Override
+        public String valueAsString() {
+            return Integer.toString(value);
+        }
 
         @Override
         public int hashCode() {
@@ -74,6 +87,11 @@ public class Constant {
         }
         
         public String value;
+        
+        @Override
+        public String valueAsString() {
+            return value;
+        }
 
         @Override
         public int hashCode() {
