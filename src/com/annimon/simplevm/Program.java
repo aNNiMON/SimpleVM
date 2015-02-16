@@ -122,8 +122,12 @@ public class Program {
         return numFields;
     }
     
+    public void addMethod(Method method) {
+        methods.put(method.getName(), method);
+    }
+    
     public void addMethod(String name, byte[] instructions, int numLocals) {
-        methods.put(name, new Method(name, instructions, numLocals));
+        addMethod(new Method(name, instructions, numLocals));
     }
     
     public Method getMethod(String name) {
