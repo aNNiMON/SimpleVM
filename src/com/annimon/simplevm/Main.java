@@ -1,9 +1,11 @@
 package com.annimon.simplevm;
 
 import static com.annimon.simplevm.Instructions.*;
+import com.annimon.simplevm.assembler.Assembler;
 import com.annimon.simplevm.lib.Print;
 import com.annimon.simplevm.lib.Concat;
 import com.annimon.simplevm.lib.ReflectionInvocator;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -106,14 +108,34 @@ public class Main {
     
     private static Program program;
     
-    public static void addMethod(String name, int numLocals) {
-        System.out.println(String.format("Adding method %s with %d locals", name, numLocals));
-        program.addMethod(name, calc, numLocals);
+    public static void main(String[] args) throws IOException {
+        if (args.length == 1) {
+            execute(args[0]);
+        } else if (args.length > 1) {
+            switch (args[0]) {
+                case "-a":
+                case "-asm":
+                    assembler(args[1]);
+                    break;
+                default:
+                    execute(args[1]);
+            }
+        } else example();
     }
     
-    public static void main(String[] args) throws IOException {
-//        program = Program.read(new FileInputStream("sample.svm"));
+    public static void execute(String file) throws IOException {
+        program = Program.read(new FileInputStream(file));
+        addNativeMethods();
+        program.execute();
+    }
+    
+    public static void assembler(String file) throws IOException {
+        program = Assembler.fromInputStream(new FileInputStream(file));
+        addNativeMethods();
+        program.execute();
+    }
         
+     public static void example() throws IOException {
         program = new Program(10);
         program.setConstant(0, Constant.string("sum"));
         program.setConstant(1, Constant.integer(-40));
@@ -129,13 +151,21 @@ public class Main {
         program.addMethod("main", main, 0);
         program.addMethod("sum", sum, 3);
         program.addMethod("average", average, 0);
+        addNativeMethods();
         
-        program.addNativeMethod("print", new Print());
-        program.addNativeMethod("concat", new Concat());
-        program.addNativeMethod("reflectCall", new ReflectionInvocator());
-        
-        new VirtualMachine(program).execute();
-        
-//        Program.write(program, new FileOutputStream("sample.svm"));
+        program.execute();
     }
+     
+    public static void addMethod(String name, int numLocals) {
+        System.out.println(String.format("Adding method %s with %d locals", name, numLocals));
+        if (program.getMethod(name) == null)
+            program.addMethod(name, calc, numLocals);
+        else System.out.println("Method already exists");
+    }
+     
+     private static void addNativeMethods() {
+         program.addNativeMethod("print", new Print());
+         program.addNativeMethod("concat", new Concat());
+         program.addNativeMethod("reflectCall", new ReflectionInvocator());
+     }
 }
