@@ -23,7 +23,12 @@ import java.util.Set;
 public class Parser {
     
     private static final String KEYWORD_METHOD = ".method";
+    
     private static final String OPCODE_LDC = "ldc";
+    private static final String OPCODE_ILOAD = "iload";
+    private static final String OPCODE_ISTORE = "istore";
+    private static final String OPCODE_GETFIELD = "getfield";
+    private static final String OPCODE_PUTFIELD = "putfield";
     
     public static Program parse(List<Token> tokens) {
         return new Parser(tokens).process().getProgram();
@@ -44,16 +49,16 @@ public class Parser {
         maxFieldAddress = -1;
         
         opcodes = new HashMap<>();
-        opcodes.put("iload", new Opcode(ILOAD, 1));
-        opcodes.put("istore", new Opcode(ISTORE, 1));
+        opcodes.put(OPCODE_ILOAD, new Opcode(ILOAD, 1));
+        opcodes.put(OPCODE_ISTORE, new Opcode(ISTORE, 1));
         opcodes.put(OPCODE_LDC, new Opcode(LDC, 1));
         opcodes.put("iconst_0", new Opcode(ICONST_0));
         opcodes.put("iconst_1", new Opcode(ICONST_1));
         opcodes.put("bconst", new Opcode(BCONST, 1));
         opcodes.put("sconst", new Opcode(SCONST, 2));
 
-        opcodes.put("getfield", new Opcode(GETFIELD, 1));
-        opcodes.put("putfield", new Opcode(PUTFIELD, 1));
+        opcodes.put(OPCODE_GETFIELD, new Opcode(GETFIELD, 1));
+        opcodes.put(OPCODE_PUTFIELD, new Opcode(PUTFIELD, 1));
 
         opcodes.put("iadd", new Opcode(IADD));
         opcodes.put("isub", new Opcode(ISUB));
@@ -86,7 +91,7 @@ public class Parser {
     
     private void createProgram() {
         ConstantPool pool = new ConstantPool(constantPool.toArray(new Constant[0]));
-        final int maxFields = 1+ maxFieldAddress;
+        final int maxFields = 1 + maxFieldAddress;
         program = new Program(pool, maxFields);
         for (Method method : methods) {
             program.addMethod(method);
@@ -146,6 +151,7 @@ public class Parser {
         // TODO add checks
         final String methodName = iterator.next().getText();
         final ByteArrayOutputStream bytecode = new ByteArrayOutputStream();
+        int maxLocalAddress = -1;
         while (iterator.hasNext()) {
             final Token token = iterator.next();
             if (isKeyword(token, KEYWORD_METHOD)) {
@@ -169,47 +175,49 @@ public class Parser {
             final Opcode opcode = opcodes.get(opcodeName);
             bytecode.write(opcode.getOpcode());
 
-            if (opcodeName.equals(OPCODE_LDC)) {
-                final Token next = iterator.next();
-                bytecode.write( findConstantIndexInPool(next.getText()) );
-            } else {
-                for (int i = opcode.getNumOfArgs(); i > 0; i--) {
+            switch (opcodeName) {
+                case OPCODE_LDC: {
                     final Token next = iterator.next();
-                    bytecode.write( Integer.parseInt(next.getText()) );
+                    bytecode.write( findConstantIndexInPool(next.getText()) );
+                } break;
+                    
+                // Search operations with local variables to calc max locals
+                case OPCODE_ILOAD:
+                case OPCODE_ISTORE: {
+                    final Token next = iterator.next();
+                    final int value = Integer.parseInt(next.getText());
+                    if (value > maxLocalAddress) {
+                        maxLocalAddress = value;
+                    }
+                    bytecode.write(value);
+                } break;
+                
+                // Search operations with fields to calc max fields
+                case OPCODE_GETFIELD:
+                case OPCODE_PUTFIELD: {
+                    final Token next = iterator.next();
+                    final int value = Integer.parseInt(next.getText());
+                    if (value > maxFieldAddress) {
+                        maxFieldAddress = value;
+                    }
+                    bytecode.write(value);
+                } break;
+                    
+                default: {
+                    for (int i = opcode.getNumOfArgs(); i > 0; i--) {
+                        final Token next = iterator.next();
+                        bytecode.write( Integer.parseInt(next.getText()) );
+                    }
                 }
+                    
             }
         }
         
-        int numLocals = 1 + calculateMaxFieldAndLocal(bytecode.toByteArray());
+        final int numLocals = 1 + maxLocalAddress;
         methods.add( new Method(methodName, bytecode.toByteArray(), numLocals) );
         try {
             bytecode.close();
         } catch (IOException ex) { }
-    }
-    
-    private int calculateMaxFieldAndLocal(byte[] bytecode) {
-        int maxLocalAddress = -1;
-        int maxGlobalAddress = -1;
-        final int last = bytecode.length - 1;
-        for (int i = 0; i < last; i++) {
-            switch (bytecode[i]) {
-                case ILOAD:
-                case ISTORE:
-                    if (bytecode[i+1] > maxLocalAddress) {
-                        maxLocalAddress = bytecode[i+1];
-                    }
-                    break;
-                    
-                case GETFIELD:
-                case PUTFIELD:
-                    if (bytecode[i+1] > maxGlobalAddress) {
-                        maxGlobalAddress = bytecode[i+1];
-                    }
-                    break;
-            }
-        }
-        maxFieldAddress = Math.max(maxFieldAddress, maxGlobalAddress);
-        return maxLocalAddress;
     }
     
     private int findConstantIndexInPool(String text) {
