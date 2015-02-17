@@ -1,0 +1,97 @@
+; Test
+
+.method "main"
+; Dynamically add method calc, then invoke it
+ldc "calc" ; arg1: name
+iconst_0 ; arg2: numLocals
+ldc "com.annimon.simplevm.Main"
+ldc "addMethod(SI)V"
+ldc "reflectCall"
+invoke_native
+
+ldc "calc"
+invoke
+
+
+; ---------
+; Calc average of sum ranges
+; ---------
+.method "calc"
+; print((String) average(sum(0,20), sum(-40,-20)))
+
+; sum(0, 20)
+iconst_0
+bconst 20
+ldc "sum"
+invoke
+
+; sum(-40, -20)
+ldc -40
+bconst 20
+ineg
+ldc "sum"
+invoke
+
+; average(i1, i2)
+ldc "average" 
+invoke
+i2s
+
+; concat strings
+ldc "Average of sum(0..20) and sum(-40..-20) is "
+ldc "concat"
+invoke_native
+
+ldc "print"
+invoke_native
+
+
+
+; ---------
+; Calculates sum of range from two arguments
+; ---------
+.method "sum"
+; sum = 0
+; for(int i = from; i <= to; i++)
+;     sum += i
+
+istore 0 ; arg2 = to
+istore 1 ; i = from
+
+; sum = 0
+iconst_0 ; int 0
+istore 2
+
+; #7
+; if (i > to) return sum
+iload 1
+iload 0
+ifgt 27
+
+; sum += i
+iload 2
+iload 1
+iadd
+istore 2
+
+; i++
+iload 1
+iinc
+istore 1
+
+goto 7
+
+; #27
+; return sum
+iload 2
+
+
+; ---------
+; Calculates average of two numbers
+; ---------
+.method "average"
+; i1 + i2
+IADD
+; (i1 + i2) / 2
+BCONST 2
+IDIV
