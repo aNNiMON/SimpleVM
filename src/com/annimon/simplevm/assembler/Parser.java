@@ -2,7 +2,7 @@ package com.annimon.simplevm.assembler;
 
 import com.annimon.simplevm.Constant;
 import com.annimon.simplevm.ConstantPool;
-import static com.annimon.simplevm.Instructions.*;
+import static com.annimon.simplevm.assembler.Opcodes.*;
 import com.annimon.simplevm.Method;
 import com.annimon.simplevm.Program;
 import java.io.ByteArrayOutputStream;
@@ -10,10 +10,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -24,12 +24,6 @@ public class Parser {
     
     private static final String KEYWORD_METHOD = ".method";
     
-    private static final String OPCODE_LDC = "ldc";
-    private static final String OPCODE_ILOAD = "iload";
-    private static final String OPCODE_ISTORE = "istore";
-    private static final String OPCODE_GETFIELD = "getfield";
-    private static final String OPCODE_PUTFIELD = "putfield";
-    
     public static Program parse(List<Token> tokens) {
         return new Parser(tokens).process().getProgram();
     }
@@ -39,7 +33,7 @@ public class Parser {
     private final List<Constant> constantPool;
     private String[] constantPoolValues;
     private final List<Method> methods;
-    private final HashMap<String, Opcode> opcodes;
+    private final Map<String, Opcode> opcodes;
     private int maxFieldAddress;
 
     public Parser(List<Token> tokens) {
@@ -47,42 +41,7 @@ public class Parser {
         constantPool = new ArrayList<>();
         methods = new ArrayList<>();
         maxFieldAddress = -1;
-        
-        opcodes = new HashMap<>();
-        opcodes.put(OPCODE_ILOAD, new Opcode(ILOAD, 1));
-        opcodes.put(OPCODE_ISTORE, new Opcode(ISTORE, 1));
-        opcodes.put(OPCODE_LDC, new Opcode(LDC, 1));
-        opcodes.put("iconst_0", new Opcode(ICONST_0));
-        opcodes.put("iconst_1", new Opcode(ICONST_1));
-        opcodes.put("bconst", new Opcode(BCONST, 1));
-        opcodes.put("sconst", new Opcode(SCONST, 2));
-
-        opcodes.put(OPCODE_GETFIELD, new Opcode(GETFIELD, 1));
-        opcodes.put(OPCODE_PUTFIELD, new Opcode(PUTFIELD, 1));
-
-        opcodes.put("iadd", new Opcode(IADD));
-        opcodes.put("isub", new Opcode(ISUB));
-        opcodes.put("imul", new Opcode(IMUL));
-        opcodes.put("idiv", new Opcode(IDIV));
-        opcodes.put("ineg", new Opcode(INEG));
-        opcodes.put("iinc", new Opcode(IINC));
-        opcodes.put("idec", new Opcode(IDEC));
-
-        opcodes.put("ifeq", new Opcode(IFEQ, 1));
-        opcodes.put("ifne", new Opcode(IFNE, 1));
-        opcodes.put("ifge", new Opcode(IFGE, 1));
-        opcodes.put("ifgt", new Opcode(IFGT, 1));
-        opcodes.put("ifle", new Opcode(IFLE, 1));
-        opcodes.put("iflt", new Opcode(IFLT, 1));
-
-        opcodes.put("goto", new Opcode(GOTO, 1));
-
-        opcodes.put("i2s", new Opcode(I2S));
-
-        opcodes.put("invoke", new Opcode(INVOKE));
-        opcodes.put("invoke_native", new Opcode(INVOKE_NATIVE));
-
-        opcodes.put("nop", new Opcode(NOP));
+        opcodes = Opcodes.getOpcodes();
     }
     
     public Program getProgram() {
