@@ -2,6 +2,7 @@ package com.annimon.simplevm;
 
 import static com.annimon.simplevm.Instructions.*;
 import com.annimon.simplevm.assembler.Assembler;
+import com.annimon.simplevm.assembler.Disassembler;
 import com.annimon.simplevm.lib.Print;
 import com.annimon.simplevm.lib.Concat;
 import com.annimon.simplevm.lib.ReflectionInvocator;
@@ -117,6 +118,9 @@ public class Main {
                 case "-asm":
                     assembler(args[1]);
                     break;
+                case "-d":
+                    disassembler(args);
+                    break;
                 default:
                     execute(args[1]);
             }
@@ -133,6 +137,29 @@ public class Main {
         program = Assembler.fromInputStream(new FileInputStream(file));
         addNativeMethods();
         program.execute();
+    }
+    
+    public static void disassembler(String[] args) throws IOException {
+        // args: -d sample.svm -nbl
+        String file = "";
+        String options = "";
+        for (int i = 1; i < args.length; i++) {
+            if (args[i].startsWith("-")) {
+                options = args[i];
+            } else {
+                file = args[i];
+            }
+        }
+        
+        if (file.isEmpty()) return;
+        System.out.println(Disassembler.fromInputStream(new FileInputStream(file))
+                 .showBytes(options.contains("b"))
+                 .showConstantPool(options.contains("p"))
+                 .showDebugInfo(options.contains("d"))
+                 .showLineNumbers(options.contains("n"))
+                 .showLdcRawAddress(options.contains("l"))
+                 .process()
+         );
     }
         
      public static void example() throws IOException {
