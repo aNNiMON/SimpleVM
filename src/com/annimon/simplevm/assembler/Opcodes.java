@@ -55,4 +55,16 @@ public final class Opcodes {
         
         return opcodes;
     }
+    
+    public static Map<Byte, Opcode> getOpcodesByteKey() {
+        final Map<Byte, Opcode> result = new HashMap<>();
+        final Map<String, Opcode> opcodes = getOpcodes();
+        for (Map.Entry<String, Opcode> entry : opcodes.entrySet()) {
+            final Opcode opcode = entry.getValue();
+            final String name = entry.getKey();
+            final byte key = opcode.getOpcode();
+            result.put(key, new Opcode(key, opcode.getNumOfArgs(), name));
+        }
+        return result;
+    }
 }
