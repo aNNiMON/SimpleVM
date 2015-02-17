@@ -153,4 +153,16 @@ public class Program {
     public void execute() {
         new VirtualMachine(this).execute();
     }
+    
+    public Iterable<Method> methods() {
+        return methods.values();
+    }
+    
+    public Iterable<NativeMethod> nativeMethods() {
+        return nativeMethods.values();
+    }
+    
+    public Iterable<Constant> constants() {
+        return constantPool;
+    }
 }

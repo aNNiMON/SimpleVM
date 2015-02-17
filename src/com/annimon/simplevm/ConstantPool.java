@@ -1,10 +1,13 @@
 package com.annimon.simplevm;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 /**
  *
  * @author aNNiMON
  */
-public class ConstantPool {
+public class ConstantPool implements Iterable<Constant> {
     
     private final Constant[] constants;
 
@@ -26,5 +29,24 @@ public class ConstantPool {
     
     public void set(int addr, Constant value) {
         constants[addr] = value;
+    }
+
+    @Override
+    public Iterator<Constant> iterator() {
+        return new Iterator<Constant>() {
+            
+            private int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return index < constants.length;
+            }
+
+            @Override
+            public Constant next() {
+                if (hasNext()) return constants[index++];
+                throw new NoSuchElementException();
+            }
+        };
     }
 }
