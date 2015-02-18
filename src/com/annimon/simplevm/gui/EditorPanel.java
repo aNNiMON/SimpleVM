@@ -3,7 +3,6 @@ package com.annimon.simplevm.gui;
 import com.annimon.simplevm.Program;
 import com.annimon.simplevm.assembler.Assembler;
 import com.annimon.simplevm.lib.Concat;
-import com.annimon.simplevm.lib.GUI;
 import com.annimon.simplevm.lib.Print;
 import com.annimon.simplevm.lib.ReflectionInvocator;
 import com.annimon.simplevm.utils.ExceptionHandler;
@@ -66,6 +65,7 @@ public class EditorPanel extends JPanel {
         toolBar.setRollover(true);
         add(toolBar, BorderLayout.NORTH);
         
+        editor.setText(".method \"main\"\nldc \"Hello, world\"\nldc \"print\"\ninvoke_native");
         editor.setFont(new Font("Lucida Console", Font.PLAIN, 14));
         editor.setPreferredSize(new Dimension(350, 300));
         add(new JScrollPane(editor), BorderLayout.CENTER);
@@ -75,7 +75,6 @@ public class EditorPanel extends JPanel {
         program = Assembler.fromString(editor.getText());
         program.addNativeMethod("print", new Print());
         program.addNativeMethod("concat", new Concat());
-        program.addNativeMethod("gui", new GUI());
         program.addNativeMethod("reflectCall", new ReflectionInvocator());
         if (saveSvmFile) {
             try (OutputStream fos = new FileOutputStream(projectName + ".svm")) {
