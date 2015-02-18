@@ -1,0 +1,52 @@
+; a = 0, b = 1, fib = 1
+; for (int i = 0; i <= N; i++)
+;   print(b)
+;   fib = a + b
+;   a = b
+;   b = fib
+.method "main"
+
+; a = 0, b = 1
+iconst_0
+istore 0
+iconst_1
+istore 1
+; fib
+iconst_1
+istore 2
+; i = 0
+iconst_0
+istore 3
+
+; L12
+; if (i <= 40)
+iload 3
+bconst 40
+ifgt 50
+
+; print fib
+iload 2
+i2s
+ldc "print"
+invoke_native
+
+; fib = a + b
+iload 0
+iload 1
+iadd
+istore 2
+
+; a = b
+iload 1
+istore 0
+
+; b = fib
+iload 2
+istore 1
+
+; i++
+iload 3
+iinc
+istore 3
+
+goto 12

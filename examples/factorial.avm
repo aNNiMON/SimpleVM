@@ -1,0 +1,68 @@
+; for (int i = 0; i <= N; i++)
+;   print("Factorial: " + factorial(i));
+.method "main"
+; i = 0
+iconst_0
+istore 0
+
+; L3
+; if (i <= 12)
+iload 0
+bconst 12
+ifgt 30
+
+; L9
+iload 0
+ldc "factorial"
+invoke
+
+i2s
+ldc "Factorial: "
+ldc "concat"
+invoke_native
+
+ldc "print"
+invoke_native
+
+iload 0
+iinc
+istore 0
+
+goto 3
+
+
+; int f = 1;
+; for (int i = 2; i <= N; i++)
+;     f *= i;
+.method "factorial"
+istore 2
+
+; f = 1
+iconst_1
+istore 0
+
+; i = 2
+bconst 2
+istore 1
+
+; L8
+; if (i <= 5)
+iload 1
+iload 2
+ifgt 28
+
+; f *= i
+iload 0
+iload 1
+imul
+istore 0
+
+; i++
+iload 1
+iinc
+istore 1
+
+goto 8
+
+; return f
+iload 0
