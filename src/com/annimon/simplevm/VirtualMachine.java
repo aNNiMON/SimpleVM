@@ -3,6 +3,7 @@ package com.annimon.simplevm;
 import static com.annimon.simplevm.Instructions.*;
 import com.annimon.simplevm.lib.NativeMethod;
 import com.annimon.simplevm.utils.Data;
+import com.annimon.simplevm.utils.ExceptionHandler;
 import com.annimon.simplevm.utils.IntStack;
 
 /**
@@ -32,6 +33,7 @@ public class VirtualMachine {
         try {
             executeMethod(program.getMethod(methodName));
         } catch (RuntimeException e) {
+            ExceptionHandler.handle(e);
             System.out.printf("%s\nat %s, instruction #%d\n",
                     e.toString(), methodName, instructionPointer);
         }
@@ -190,7 +192,7 @@ public class VirtualMachine {
                     try {
                         nm.invoke();
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        ExceptionHandler.handle(ex);
                     }
                 } break;
                     
