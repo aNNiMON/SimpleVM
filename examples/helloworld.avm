@@ -1,0 +1,5 @@
+.method "main"
+
+ldc "Hello, world"
+ldc "print"
+invoke_native
