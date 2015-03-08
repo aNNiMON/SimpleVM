@@ -5,6 +5,7 @@ import com.annimon.simplevm.ConstantPool;
 import static com.annimon.simplevm.assembler.Opcodes.*;
 import com.annimon.simplevm.Method;
 import com.annimon.simplevm.Program;
+import com.annimon.simplevm.utils.ExceptionHandler;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,7 +50,8 @@ public class Parser {
     }
     
     private void createProgram() {
-        ConstantPool pool = new ConstantPool(constantPool.toArray(new Constant[0]));
+        final ConstantPool pool = new ConstantPool(
+                constantPool.toArray(new Constant[constantPool.size()]) );
         final int maxFields = 1 + maxFieldAddress;
         program = new Program(pool, maxFields);
         for (Method method : methods) {
@@ -176,7 +178,9 @@ public class Parser {
         methods.add( new Method(methodName, bytecode.toByteArray(), numLocals) );
         try {
             bytecode.close();
-        } catch (IOException ex) { }
+        } catch (IOException ex) {
+            ExceptionHandler.handle(ex);
+        }
     }
     
     private int findConstantIndexInPool(String text) {

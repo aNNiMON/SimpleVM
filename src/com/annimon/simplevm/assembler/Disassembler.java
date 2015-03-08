@@ -126,7 +126,7 @@ public final class Disassembler {
         return code.toString();
     }
     
-    private class Options {
+    private static class Options {
         boolean showLineNumbers;
         boolean showLdcRawAddress;
         boolean showDebugInfo;
