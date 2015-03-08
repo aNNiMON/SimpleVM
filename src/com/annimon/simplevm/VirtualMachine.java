@@ -34,7 +34,7 @@ public class VirtualMachine {
             executeMethod(program.getMethod(methodName));
         } catch (RuntimeException e) {
             ExceptionHandler.handle(e);
-            System.out.printf("%s\nat %s, instruction #%d\n",
+            System.out.printf("%s%nat %s, instruction #%d\n",
                     e.toString(), methodName, instructionPointer);
         }
     }
